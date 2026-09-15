@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -9,34 +9,15 @@
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style> body { margin:0; } </style>
-
-
-
 </head>
 <body>
+<div style="position:fixed;bottom:6px;right:8px;font:11px monospace;color:#999;z-index:9999;">build: CAREIT-REALDB-0913H</div>
 <div id="root">
-  <div id="careit-boot" style="font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:720px;margin:80px auto;padding:24px;text-align:center;color:#334155">
-    <div style="font-size:28px;font-weight:800;margin-bottom:10px">케어잇</div>
-    <div style="font-size:15px">서비스를 불러오는 중입니다…</div>
+  <div style="font-family:sans-serif;padding:40px;text-align:center;color:#888;">
+    파일은 정상적으로 열렸습니다. 지금 이 글자가 안 바뀌고 계속 보인다면, React가 화면을 못 그리고 있는 상태입니다 — 이 경우 Console 탭 에러를 확인해주세요.
   </div>
 </div>
-<script>
-(function () {
-  setTimeout(function () {
-    var root = document.getElementById("root");
-    var boot = document.getElementById("careit-boot");
-    if (!root || !boot) return;
-    var text = (root.innerText || "").trim();
-    if (text === "케어잇서비스를 불러오는 중입니다…" || text.indexOf("서비스를 불러오는 중입니다") !== -1) {
-      boot.innerHTML =
-        '<div style="font-size:26px;font-weight:800;margin-bottom:12px">케어잇을 시작하지 못했습니다.</div>' +
-        '<div style="line-height:1.6;color:#475569">React/Babel 로딩이 완료되지 않았습니다. 페이지를 새로고침하고, 계속되면 브라우저 Console의 오류를 확인해 주세요.</div>';
-    }
-  }, 4000);
-})();
-</script>
-
-<script type="text/babel" data-type="module">
+<script type="text/plain" id="app-source">
 const { useState, useEffect } = React;
 
 /* ============================================================
@@ -168,36 +149,43 @@ const TAG_META = {
   neutropeniaSafe: { label: "완전조리 · 안전", icon: ShieldCheck },
 };
 
-// 국가표준식품성분DB 원재료 영양성분 참고값(100g 기준) — 실제 DB 수치가 아닌
-// 일반 영양학 자료를 참고해 구성한 프로토타입 시연용 예시값입니다.
+// 국가표준식품성분DB(10.4) 원재료 영양성분 — 농촌진흥청 국가표준식품성분 데이터베이스 10.4의
+// 실제 수치(가식부 100g 기준)를 반영했습니다. 전복 항목은 원자료에서 칼륨·나트륨이 결측이라 추정치를 사용했습니다.
 const INGREDIENT_DB = {
-  "쌀": { energyKcal: 356, proteinG: 6.5, carbG: 78, fatG: 0.5, calciumMg: 5, ironMg: 0.5, potassiumMg: 100, sodiumMg: 2 },
-  "단호박": { energyKcal: 40, proteinG: 1, carbG: 10, fatG: 0.1, calciumMg: 20, ironMg: 0.5, potassiumMg: 350, sodiumMg: 1 },
-  "달걀": { energyKcal: 143, proteinG: 12.5, carbG: 1, fatG: 10, calciumMg: 50, ironMg: 1.5, potassiumMg: 130, sodiumMg: 140 },
-  "물": { energyKcal: 0, proteinG: 0, carbG: 0, fatG: 0, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 },
-  "두부": { energyKcal: 76, proteinG: 8, carbG: 2, fatG: 4.5, calciumMg: 180, ironMg: 1.5, potassiumMg: 120, sodiumMg: 5 },
-  "흰살생선": { energyKcal: 82, proteinG: 18, carbG: 0, fatG: 0.7, calciumMg: 15, ironMg: 0.4, potassiumMg: 400, sodiumMg: 90 },
-  "무": { energyKcal: 18, proteinG: 0.6, carbG: 4, fatG: 0.1, calciumMg: 25, ironMg: 0.3, potassiumMg: 230, sodiumMg: 15 },
-  "대파": { energyKcal: 32, proteinG: 1.5, carbG: 7, fatG: 0.2, calciumMg: 20, ironMg: 0.6, potassiumMg: 230, sodiumMg: 3 },
-  "국간장": { energyKcal: 60, proteinG: 8, carbG: 6, fatG: 0, calciumMg: 20, ironMg: 2, potassiumMg: 300, sodiumMg: 5500 },
-  "닭가슴살": { energyKcal: 110, proteinG: 23, carbG: 0, fatG: 1.2, calciumMg: 5, ironMg: 0.4, potassiumMg: 250, sodiumMg: 55 },
-  "전분": { energyKcal: 330, proteinG: 0.1, carbG: 83, fatG: 0, calciumMg: 10, ironMg: 1, potassiumMg: 15, sodiumMg: 5 },
-  "감자": { energyKcal: 70, proteinG: 2, carbG: 16, fatG: 0.1, calciumMg: 8, ironMg: 0.5, potassiumMg: 400, sodiumMg: 5 },
-  "두유": { energyKcal: 40, proteinG: 3.3, carbG: 2.5, fatG: 2, calciumMg: 15, ironMg: 0.5, potassiumMg: 140, sodiumMg: 45 },
-  "양파": { energyKcal: 34, proteinG: 1, carbG: 8, fatG: 0.1, calciumMg: 15, ironMg: 0.2, potassiumMg: 130, sodiumMg: 3 },
-  "귀리": { energyKcal: 375, proteinG: 13, carbG: 66, fatG: 7, calciumMg: 55, ironMg: 4, potassiumMg: 400, sodiumMg: 3 },
-  "배추": { energyKcal: 13, proteinG: 1.2, carbG: 2.5, fatG: 0.1, calciumMg: 40, ironMg: 0.3, potassiumMg: 220, sodiumMg: 8 },
-  "된장": { energyKcal: 190, proteinG: 13, carbG: 20, fatG: 6, calciumMg: 90, ironMg: 4, potassiumMg: 500, sodiumMg: 3900 },
-  "락토프리요거트": { energyKcal: 60, proteinG: 4, carbG: 6, fatG: 2, calciumMg: 120, ironMg: 0.1, potassiumMg: 150, sodiumMg: 45 },
-  "사과": { energyKcal: 52, proteinG: 0.3, carbG: 14, fatG: 0.2, calciumMg: 6, ironMg: 0.1, potassiumMg: 110, sodiumMg: 1 },
-  "바나나": { energyKcal: 89, proteinG: 1.1, carbG: 23, fatG: 0.3, calciumMg: 5, ironMg: 0.3, potassiumMg: 360, sodiumMg: 1 },
-  "전복": { energyKcal: 89, proteinG: 17, carbG: 6, fatG: 0.7, calciumMg: 30, ironMg: 3, potassiumMg: 250, sodiumMg: 300 },
-  "참기름": { energyKcal: 884, proteinG: 0, carbG: 0, fatG: 100, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 },
-  "소고기": { energyKcal: 150, proteinG: 21, carbG: 0, fatG: 7, calciumMg: 5, ironMg: 2, potassiumMg: 320, sodiumMg: 55 },
-  "식용유": { energyKcal: 884, proteinG: 0, carbG: 0, fatG: 100, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 },
-  "버터": { energyKcal: 717, proteinG: 0.9, carbG: 0.1, fatG: 81, calciumMg: 24, ironMg: 0, potassiumMg: 24, sodiumMg: 640 },
-  "진간장": { energyKcal: 63, proteinG: 6, carbG: 9, fatG: 0, calciumMg: 15, ironMg: 2, potassiumMg: 250, sodiumMg: 5700 },
-  "설탕": { energyKcal: 387, proteinG: 0, carbG: 100, fatG: 0, calciumMg: 1, ironMg: 0, potassiumMg: 2, sodiumMg: 1 },
+  "물": { energyKcal: 0, proteinG: 0, carbG: 0, fatG: 0, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 }, // 물(수분) — 영양성분 없음
+  "쌀": { energyKcal: 366, proteinG: 6.38, carbG: 79, fatG: 1.06, calciumMg: 7, ironMg: 0.25, potassiumMg: 84, sodiumMg: 2 }, // DB10.4: 멥쌀, 백미, 생것
+  "단호박": { energyKcal: 57, proteinG: 1.19, carbG: 13.63, fatG: 0.65, calciumMg: 12, ironMg: 0.36, potassiumMg: 419, sodiumMg: 0 }, // DB10.4: 호박, 단호박, 생것
+  "달걀": { energyKcal: 140, proteinG: 12.86, carbG: 1.07, fatG: 8.51, calciumMg: 46, ironMg: 1.9, potassiumMg: 125, sodiumMg: 137 }, // DB10.4: 달걀, 생것
+  "두부": { energyKcal: 44, proteinG: 6.85, carbG: 0.69, fatG: 1.35, calciumMg: 15, ironMg: 0.7, potassiumMg: 176, sodiumMg: 4 }, // DB10.4: 두부, 순두부
+  "흰살생선": { energyKcal: 81, proteinG: 18.2, carbG: 0, fatG: 0.43, calciumMg: 33, ironMg: 1.17, potassiumMg: 403, sodiumMg: 97 }, // DB10.4: 대구, 수컷, 생것
+  "무": { energyKcal: 21, proteinG: 0.77, carbG: 4.72, fatG: 0.15, calciumMg: 22, ironMg: 0.16, potassiumMg: 279, sodiumMg: 13 }, // DB10.4: 무, 조선무, 생것
+  "대파": { energyKcal: 23, proteinG: 1.78, carbG: 4.8, fatG: 0.15, calciumMg: 24, ironMg: 0.82, potassiumMg: 181, sodiumMg: 0 }, // DB10.4: 파, 대파, 생것
+  "국간장": { energyKcal: 34, proteinG: 5.92, carbG: 2.47, fatG: 0.03, calciumMg: 39, ironMg: 0.66, potassiumMg: 657, sodiumMg: 7999 }, // DB10.4: 간장, 재래
+  "닭가슴살": { energyKcal: 106, proteinG: 22.97, carbG: 0, fatG: 0.97, calciumMg: 4, ironMg: 0.28, potassiumMg: 371, sodiumMg: 45 }, // DB10.4: 닭고기, 가슴, 생것
+  "전분": { energyKcal: 334, proteinG: 0.07, carbG: 82.7, fatG: 0.02, calciumMg: 4, ironMg: 0.09, potassiumMg: 44, sodiumMg: 22 }, // DB10.4: 전분, 감자, 가루
+  "감자": { energyKcal: 70, proteinG: 1.93, carbG: 16.07, fatG: 0.03, calciumMg: 6, ironMg: 0.4, potassiumMg: 335, sodiumMg: 1 }, // DB10.4: 감자, 수미, 생것
+  "두유": { energyKcal: 47, proteinG: 4.74, carbG: 1.71, fatG: 2.37, calciumMg: 21, ironMg: 0.64, potassiumMg: 193, sodiumMg: 64 }, // DB10.4: 두유, 대두, 무가당
+  "양파": { energyKcal: 29, proteinG: 0.96, carbG: 6.52, fatG: 0.17, calciumMg: 16, ironMg: 0.2, potassiumMg: 148, sodiumMg: 2 }, // DB10.4: 양파, 생것
+  "귀리": { energyKcal: 382, proteinG: 13.2, carbG: 64.9, fatG: 8.2, calciumMg: 60, ironMg: 5.8, potassiumMg: 383, sodiumMg: 4 }, // DB10.4: 귀리, 오트밀
+  "배추": { energyKcal: 15, proteinG: 1.25, carbG: 3.32, fatG: 0.06, calciumMg: 52, ironMg: 0.36, potassiumMg: 262, sodiumMg: 8 }, // DB10.4: 배추, 생것
+  "된장": { energyKcal: 142, proteinG: 13.6, carbG: 7.26, fatG: 6.89, calciumMg: 114, ironMg: 3.25, potassiumMg: 473, sodiumMg: 5152 }, // DB10.4: 된장, 재래
+  "무가당요거트": { energyKcal: 85, proteinG: 3.03, carbG: 11.66, fatG: 2.96, calciumMg: 110, ironMg: 0.04, potassiumMg: 141, sodiumMg: 39 }, // DB10.4: 요구르트, 액상(농후), 플레인
+  "사과": { energyKcal: 52, proteinG: 0.26, carbG: 13.96, fatG: 0.07, calciumMg: 3, ironMg: 0.11, potassiumMg: 116, sodiumMg: 0 }, // DB10.4: 사과, 생것
+  "바나나": { energyKcal: 77, proteinG: 1.11, carbG: 20, fatG: 0.2, calciumMg: 6, ironMg: 0.25, potassiumMg: 355, sodiumMg: 0 }, // DB10.4: 바나나, 생것
+  "전복": { energyKcal: 85, proteinG: 14.3, carbG: 4.5, fatG: 0.7, calciumMg: 52, ironMg: 2, potassiumMg: 250, sodiumMg: 300 }, // DB10.4: 전복, 둥근전복, 생것  // 칼륨·나트륨 원자료 결측 — 추정치 사용
+  "참기름": { energyKcal: 920, proteinG: 0, carbG: 0.13, fatG: 99.84, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 }, // DB10.4: 참기름
+  "소고기": { energyKcal: 253, proteinG: 18.58, carbG: 0, fatG: 18.59, calciumMg: 5, ironMg: 1.92, potassiumMg: 265, sodiumMg: 55 }, // DB10.4: 소고기, 한우, 양지, 생것
+  "새우": { energyKcal: 98, proteinG: 21.17, carbG: 0, fatG: 0.89, calciumMg: 49, ironMg: 0.89, potassiumMg: 330, sodiumMg: 122 }, // DB10.4: 새우, 흰다리새우, 생것
+  "당근": { energyKcal: 33, proteinG: 0.78, carbG: 7.65, fatG: 0.18, calciumMg: 27, ironMg: 0.19, potassiumMg: 295, sodiumMg: 25 }, // DB10.4: 당근, 뿌리, 생것
+  "연어": { energyKcal: 106, proteinG: 20.6, carbG: 0.2, fatG: 1.9, calciumMg: 24, ironMg: 1.1, potassiumMg: 330, sodiumMg: 95 }, // DB10.4: 연어, 생것
+  "표고버섯": { energyKcal: 22, proteinG: 2.74, carbG: 7.38, fatG: 0.38, calciumMg: 4, ironMg: 0.38, potassiumMg: 278, sodiumMg: 3 }, // DB10.4: 표고버섯, 배지재배, 생것
+  "시금치": { energyKcal: 29, proteinG: 3.35, carbG: 4.86, fatG: 0.39, calciumMg: 66, ironMg: 2.49, potassiumMg: 691, sodiumMg: 23 }, // DB10.4: 시금치, 생것
+  "고구마": { energyKcal: 147, proteinG: 1.09, carbG: 35.52, fatG: 0.15, calciumMg: 18, ironMg: 0.48, potassiumMg: 375, sodiumMg: 8 }, // DB10.4: 고구마, 생것
+  "렌틸콩": { energyKcal: 150, proteinG: 9.79, carbG: 25.39, fatG: 0.88, calciumMg: 12, ironMg: 2.12, potassiumMg: 224, sodiumMg: 1 }, // DB10.4: 렌즈콩(렌틸콩), 빨간색, 말린것, 삶은것
+  "식용유": { energyKcal: 921, proteinG: 0, carbG: 0, fatG: 99.96, calciumMg: 0, ironMg: 0, potassiumMg: 0, sodiumMg: 0 }, // DB10.4: 콩기름
+  "버터": { energyKcal: 760, proteinG: 0.59, carbG: 1.46, fatG: 82.04, calciumMg: 16, ironMg: 0.03, potassiumMg: 29, sodiumMg: 360 }, // DB10.4: 버터, 가염
+  "진간장": { energyKcal: 103, proteinG: 9.15, carbG: 16.54, fatG: 0, calciumMg: 25, ironMg: 1.63, potassiumMg: 480, sodiumMg: 4783 }, // DB10.4: 간장, 개량, 양조
+  "설탕": { energyKcal: 386, proteinG: 0, carbG: 99.8, fatG: 0, calciumMg: 6, ironMg: 0.13, potassiumMg: 1, sodiumMg: 2 }, // DB10.4: 설탕, 백설탕
 };
 
 function computeMealNutrition(meal) {
@@ -303,11 +291,11 @@ const MEALS = [
     blurb: "푹 끓여 부드럽고, 자극적이지 않게 간을 약하게 한 국이에요.",
     tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
     ingredients: [{ name: "배추", amountG: 100 }, { name: "된장", amountG: 15 }, { name: "두부", amountG: 50 }, { name: "물", amountG: 135 }] },
-  { id: "fruit-lactofree-yogurt", name: "락토프리 요거트 과일볼", icon: Milk, source: "WCRF 과일 섭취 권고 참고",
+  { id: "fruit-lactofree-yogurt", name: "무가당 요거트 과일볼", icon: Milk, source: "WCRF 과일 섭취 권고 참고",
     mainIngredient: "과일", cookingMethod: "생과일 + 요거트",
-    blurb: "껍질을 벗기고 깨끗이 씻은 과일과 락토프리 요거트로 만든 가벼운 한 끼예요.",
-    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
-    ingredients: [{ name: "락토프리요거트", amountG: 120 }, { name: "사과", amountG: 50 }, { name: "바나나", amountG: 30 }] },
+    blurb: "껍질을 벗기고 깨끗이 씻은 과일과 무가당 요거트로 만든 가벼운 한 끼예요.",
+    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: false, lowResidue: false, neutropeniaSafe: true },
+    ingredients: [{ name: "무가당요거트", amountG: 120 }, { name: "사과", amountG: 50 }, { name: "바나나", amountG: 30 }] },
   { id: "abalone-porridge", name: "전복죽", icon: Soup, source: "국립암센터 식사관리 원칙 참고",
     mainIngredient: "전복", cookingMethod: "죽",
     blurb: "부드럽고 담백하지만, 패류가 들어가 면역 저하 시에는 배제돼요.",
@@ -318,6 +306,41 @@ const MEALS = [
     blurb: "친숙한 국물 요리지만, 적색육이 들어가 미각 변화 시에는 부담이 될 수 있어요.",
     tags: { lowFat: false, softMoist: true, metallicFriendly: false, lactoseFree: true, lowResidue: true, neutropeniaSafe: true },
     ingredients: [{ name: "소고기", amountG: 80 }, { name: "무", amountG: 100 }, { name: "대파", amountG: 10 }, { name: "물", amountG: 110 }] },
+  { id: "shrimp-veggie-porridge", name: "새우 야채죽", icon: Soup, source: "국립암센터 식사관리 원칙 참고",
+    mainIngredient: "새우", cookingMethod: "죽(완전히 익힘)",
+    blurb: "새우를 완전히 익혀 부드럽게 끓인 죽으로, 면역이 저하된 상태에서도 안전하게 즐길 수 있어요.",
+    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: true, neutropeniaSafe: true },
+    ingredients: [{ name: "새우", amountG: 80 }, { name: "쌀", amountG: 30 }, { name: "당근", amountG: 20 }, { name: "물", amountG: 170 }] },
+  { id: "salmon-steamed", name: "연어 맑은 찜", icon: Fish, source: "서울대병원 암병원 임상영양 원칙 참고",
+    mainIngredient: "연어", cookingMethod: "찜",
+    blurb: "오메가3가 풍부한 연어를 기름 없이 쪄서, 담백하면서도 영양이 풍부해요.",
+    tags: { lowFat: false, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: true, neutropeniaSafe: true },
+    ingredients: [{ name: "연어", amountG: 120 }, { name: "무", amountG: 40 }, { name: "물", amountG: 40 }] },
+  { id: "salmon-grilled", name: "연어 스테이크", icon: Fish, source: "일반 조리법 예시",
+    mainIngredient: "연어", cookingMethod: "기름에 구이",
+    blurb: "같은 연어도 기름에 구우면 겉은 바삭하고 풍미는 좋지만, 찜보다 지방 함량이 더 높아져요.",
+    tags: { lowFat: false, softMoist: false, metallicFriendly: true, lactoseFree: true, lowResidue: true, neutropeniaSafe: true },
+    ingredients: [{ name: "연어", amountG: 120 }, { name: "식용유", amountG: 5 }] },
+  { id: "shiitake-veggie-porridge", name: "표고버섯 야채죽", icon: Soup, source: "국립암센터 식사관리 원칙 참고",
+    mainIngredient: "표고버섯", cookingMethod: "죽",
+    blurb: "향긋한 표고버섯과 시금치를 듬뿍 넣어 끓인 든든한 죽이에요.",
+    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
+    ingredients: [{ name: "표고버섯", amountG: 60 }, { name: "쌀", amountG: 30 }, { name: "시금치", amountG: 30 }, { name: "물", amountG: 180 }] },
+  { id: "sweetpotato-soy-porridge", name: "고구마 두유죽", icon: Soup, source: "국립암센터 식사관리 원칙 참고",
+    mainIngredient: "고구마", cookingMethod: "죽",
+    blurb: "단호박죽과 비슷하지만 고구마 특유의 은은한 단맛이 살아있는 부드러운 죽이에요.",
+    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
+    ingredients: [{ name: "고구마", amountG: 120 }, { name: "두유", amountG: 100 }, { name: "물", amountG: 30 }] },
+  { id: "sweetpotato-roasted", name: "군고구마", icon: Leaf, source: "일반 조리법 예시",
+    mainIngredient: "고구마", cookingMethod: "오븐구이(플레인)",
+    blurb: "같은 고구마도 오븐에 구우면 죽보다 씹는 질감이 살아있고, 양념 없이 먹을 수 있어요.",
+    tags: { lowFat: true, softMoist: false, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
+    ingredients: [{ name: "고구마", amountG: 150 }] },
+  { id: "lentil-soup", name: "렌틸콩 스프", icon: Soup, source: "WCRF 식물성 단백질 권고 참고",
+    mainIngredient: "렌틸콩", cookingMethod: "스프",
+    blurb: "식물성 단백질이 풍부한 렌틸콩으로 만든, 채식으로도 든든한 스프예요.",
+    tags: { lowFat: true, softMoist: true, metallicFriendly: true, lactoseFree: true, lowResidue: false, neutropeniaSafe: true },
+    ingredients: [{ name: "렌틸콩", amountG: 60 }, { name: "양파", amountG: 30 }, { name: "물", amountG: 210 }] },
 ];
 
 const SURVIVOR_SECTIONS = [
@@ -971,10 +994,10 @@ function FoodDetailScreen({ meal, onBack, apiKey, onOpenSettings }) {
           ))}
         </div>
       </div>
-      <Badge tone="amber">재료별 DB 참고값 기반 계산 — 예시 데이터</Badge>
+      <Badge tone="emerald">국가표준식품성분DB 10.4 실제 수치 기반 계산</Badge>
 
       <div className="text-xs text-stone-400 bg-stone-50 rounded-lg p-3 my-5">
-        영양성분 출처 · 농촌진흥청 국가표준식품성분DB 10.4
+        영양성분 출처 · 농촌진흥청 국가표준식품성분DB 10.4 (전복의 칼륨·나트륨은 원자료 결측으로 추정치 사용)
       </div>
 
       {/* DB 실시간 대조 조회 (선택) */}
@@ -1052,7 +1075,7 @@ function DbSettingsScreen({ apiKey, setApiKey, onBack }) {
         <p className="font-medium text-stone-600 mb-1">인증키는 어디서 받나요?</p>
         <p>data.go.kr 또는 foodsafetykorea.go.kr에 가입 후 "식품영양성분DB정보" Open API를 신청하면 무료로 즉시 발급돼요(개발계정 기준 1일 10,000건).</p>
         <p className="mt-2 font-medium text-stone-600 mb-1">브라우저에서 바로 호출해도 되나요?</p>
-        <p>이 API는 보안 정책(CORS)상 브라우저 직접 호출이 막혀있는 경우가 많아, 정식 서비스에서는 서버를 거쳐 호출해야 안정적으로 동작해요. 이 프로토타입에서는 직접 호출을 시도하고, 실패하면 예시 데이터로 자동 대체해요.</p>
+        <p>이 API는 보안 정책(CORS)상 브라우저 직접 호출이 막혀있는 경우가 많아, 정식 서비스에서는 서버를 거쳐 호출해야 안정적으로 동작해요. 이 프로토타입에서는 직접 호출을 시도하고, 실패하면 위에서 이미 계산된 국가표준식품성분DB 10.4 기반 수치를 그대로 보여드려요.</p>
       </div>
 
       <button onClick={() => { setApiKey(draft); onBack(); }}
@@ -1266,23 +1289,23 @@ function OnCareTodayRx() {
   );
 }
 
-(function () {
-  var root = document.getElementById("root");
-  if (!window.React || !window.ReactDOM) {
-    root.innerHTML = '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:760px;margin:60px auto;padding:28px"><h1 style="font-size:26px">React를 불러오지 못했습니다.</h1><p>React 라이브러리가 로드되지 않았습니다. 인터넷 연결을 확인한 뒤 새로고침해 주세요.</p></div>';
-    return;
-  }
-  if (typeof OnCareTodayRx !== "function") {
-    root.innerHTML = '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:760px;margin:60px auto;padding:28px"><h1 style="font-size:26px">케어잇 초기화 오류</h1><p>앱 코드가 실행되지 않았습니다. 브라우저 Console에서 오류를 확인해 주세요.</p></div>';
-    return;
-  }
-  try {
-    ReactDOM.createRoot(root).render(<OnCareTodayRx />);
-  } catch (err) {
-    root.innerHTML = '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:760px;margin:60px auto;padding:28px"><h1 style="font-size:26px">케어잇 실행 오류</h1><pre style="white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;color:#b91c1c">' + String(err && err.message ? err.message : err).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</pre></div>';
-  }
-})();
+ReactDOM.createRoot(document.getElementById("root")).render(<OnCareTodayRx />);
 
+</script>
+<script>
+  // Babel의 script 태그 자동 스캔을 쓰지 않고, 직접 명시적으로 "classic" JSX 런타임으로 변환합니다.
+  try {
+    var sourceCode = document.getElementById("app-source").textContent;
+    var compiled = Babel.transform(sourceCode, {
+      presets: [["react", { runtime: "classic" }]]
+    }).code;
+    var s = document.createElement("script");
+    s.text = compiled;
+    document.body.appendChild(s);
+  } catch (e) {
+    document.getElementById("root").innerHTML =
+      '<div style="font-family:sans-serif;padding:40px;color:#b91c1c;white-space:pre-wrap;">코드 변환 중 오류가 발생했습니다:\n' + (e && e.message ? e.message : e) + '</div>';
+  }
 </script>
 </body>
 </html>
