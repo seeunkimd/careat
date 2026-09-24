@@ -11,7 +11,7 @@
 <style> body { margin:0; } </style>
 </head>
 <body>
-<div style="position:fixed;bottom:6px;right:8px;font:11px monospace;color:#999;z-index:9999;">build: CAREIT-CRITCARE-0924B</div>
+<div style="position:fixed;bottom:6px;right:8px;font:11px monospace;color:#999;z-index:9999;">build: CAREIT-NEUTROHINT-0924C</div>
 <div id="root">
   <div style="font-family:sans-serif;padding:40px;text-align:center;color:#888;">
     파일은 정상적으로 열렸습니다. 지금 이 글자가 안 바뀌고 계속 보인다면, React가 화면을 못 그리고 있는 상태입니다 — 이 경우 Console 탭 에러를 확인해주세요.
@@ -78,7 +78,7 @@ const SYMPTOMS = [
   { id: "dysgeusia", label: "미각 변화", icon: UtensilsCrossed },
   { id: "dysphagia", label: "연하 · 저작장애", icon: Droplets },
   { id: "malabsorption", label: "소화장애 · 지방변", icon: Leaf },
-  { id: "neutropenia", label: "호중구 감소증", icon: ShieldCheck },
+  { id: "neutropenia", label: "호중구 감소증", hint: "최근 진료에서 \"백혈구·호중구 수치가 낮다\"는 말을 들었거나, 혈액검사 결과지에 표시되어 있었다면 선택하세요", icon: ShieldCheck },
 ];
 
 const SYMPTOM_REQUIREMENTS = {
@@ -772,16 +772,19 @@ function SymptomsScreen({ symptoms, toggleSymptom, onNext, onBack }) {
           const Icon = s.icon;
           return (
             <button key={s.id} onClick={() => toggleSymptom(s.id)}
-              className={`flex items-center gap-3 text-left rounded-xl border-2 px-4 py-3.5 transition-colors ${active ? "border-teal-600 bg-teal-50" : "border-stone-200 bg-white hover:border-stone-300"}`}>
-              <Icon className={`w-5 h-5 flex-none ${active ? "text-teal-700" : "text-stone-400"}`} />
-              <span className={`text-sm font-medium ${active ? "text-teal-800" : "text-stone-700"}`}>{s.label}</span>
+              className={`flex items-start gap-3 text-left rounded-xl border-2 px-4 py-3.5 transition-colors ${active ? "border-teal-600 bg-teal-50" : "border-stone-200 bg-white hover:border-stone-300"}`}>
+              <Icon className={`w-5 h-5 flex-none mt-0.5 ${active ? "text-teal-700" : "text-stone-400"}`} />
+              <div>
+                <div className={`text-sm font-medium ${active ? "text-teal-800" : "text-stone-700"}`}>{s.label}</div>
+                {s.hint && <div className="text-xs text-stone-400 mt-0.5 leading-snug">{s.hint}</div>}
+              </div>
             </button>
           );
         })}
       </div>
       <div className="flex items-start gap-2 text-sm text-stone-500 bg-stone-50 rounded-xl p-3.5 mb-7">
         <Info className="w-4 h-4 flex-none mt-0.5 text-stone-400" />
-        선택한 증상을 바탕으로 적절한 식사 형태와 식품을 추천합니다. 해당하는 증상이 없다면 선택 없이 진행해도 괜찮아요.
+        선택한 증상을 바탕으로 적절한 식사 형태와 식품을 추천합니다. 해당하는 증상이 없다면 선택 없이 진행해도 괜찮아요. 호중구 감소증처럼 스스로 느끼기 어려운 항목은 최근 혈액검사 결과나 담당 의료진의 안내를 참고해 선택해주세요.
       </div>
       <button onClick={onNext} className="w-full rounded-xl py-3.5 text-base font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-colors">
         오늘의 영양 가이드 확인
