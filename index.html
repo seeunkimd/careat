@@ -11,7 +11,7 @@
 <style> body { margin:0; } </style>
 </head>
 <body>
-<div style="position:fixed;bottom:6px;right:8px;font:11px monospace;color:#999;z-index:9999;">build: CAREIT-COOKSWAP-0924D</div>
+<div style="position:fixed;bottom:6px;right:8px;font:11px monospace;color:#999;z-index:9999;">build: CAREIT-COOKRCP01-0924E</div>
 <div id="root">
   <div style="font-family:sans-serif;padding:40px;text-align:center;color:#888;">
     파일은 정상적으로 열렸습니다. 지금 이 글자가 안 바뀌고 계속 보인다면, React가 화면을 못 그리고 있는 상태입니다 — 이 경우 Console 탭 에러를 확인해주세요.
@@ -352,7 +352,7 @@ const ABOUT_QA = [
   { q: "어떤 문제를 해결하나요?", a: "암 환자와 보호자는 매일 달라지는 치료 부작용에 맞춰 무엇을, 어떻게 조리해 먹어야 할지 판단하기 어렵고, 검증되지 않은 정보에 의존하기 쉽습니다." },
   { q: "누구를 위한 서비스인가요?", a: "항암·방사선 치료를 받고 있는 통원·외래 암 환자와 보호자입니다. 중환자실 치료가 필요한 중증 상태는 대상이 아니며, 이 경우 의료진의 직접 평가가 필요합니다." },
   { q: "사용자가 입력하는 정보는?", a: "체중·신장·나이·성별, 최근 체중 감소량, 임상 대사 상태, 오늘의 치료 부작용 증상입니다." },
-  { q: "국가표준식품성분DB는 어떻게 활용되나요?", a: "사용자 상태로 산출한 영양 목표를 바탕으로, 국가표준식품성분DB의 식품별 영양성분 정보를 조회해 조건에 맞는 식품·메뉴를 매칭하고 영양정보를 제공합니다." },
+  { q: "국가표준식품성분DB는 어떻게 활용되나요?", a: "사용자 상태로 산출한 영양 목표를 바탕으로, 메뉴를 재료와 사용량으로 분해해 국가표준식품성분DB의 재료별 영양성분(100g 기준)을 곱셈·합산하는 방식으로 계산합니다. 재료 구성(레시피) 자체는 현재 예시이며, 식약처 「조리식품의 레시피 DB(COOKRCP01)」와의 연동을 다음 단계로 계획하고 있습니다." },
   { q: "사용자가 받는 결과는?", a: "1일 참고 열량·단백질·수분 목표 범위, 오늘 증상에 맞는 식사 가이드, 국가표준식품성분DB 기반 메뉴 추천과 영양정보입니다." },
   { q: "기존 서비스와 다른 점은?", a: "섭취 후 기록·평가하는 사후형 서비스가 아니라, 치료 단계와 오늘의 증상을 먼저 반영해 선제적으로 식사를 제안합니다. 또한 같은 재료라도 삶기·찜·죽·굽기 등 조리법에 따라 지방·나트륨 등 영양성분이 달라진다는 점을 재료 단위 DB 계산으로 보여주고, 조리 질감·온도 등 실행 가능한 행동 지침까지 함께 제공합니다." },
   { q: "향후 확장 가능성은?", a: "실제 국가표준식품성분DB API 연동, 병원 임상영양팀과의 검증, 암종별·수술별 세부 가이드 추가, 보호자용 공유 기능 등으로 확장할 수 있습니다." },
@@ -1126,6 +1126,11 @@ function FoodDetailScreen({ meal, onBack, apiKey, onOpenSettings, onSwitchMeal }
           </button>
         )}
       </div>
+      <p className="text-xs text-stone-400 mb-3 leading-relaxed">
+        지금 재료 배합은 일반적인 조리 상식을 바탕으로 구성한 예시 레시피입니다. 정식 서비스에서는
+        식품의약품안전처 「조리식품의 레시피 DB(COOKRCP01)」의 표준 재료정보와 연동할 계획이며,
+        그 전까지는 위 그램수를 직접 수정하거나 재료를 추가해 실제 섭취 내용에 맞게 바꿀 수 있습니다.
+      </p>
       <div className="space-y-2 mb-4">
         {customIngredients.map((ing) => (
           <div key={ing.name} className="flex items-center gap-2 bg-stone-50 rounded-lg px-3 py-2">
